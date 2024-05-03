@@ -1,5 +1,6 @@
 package bitcamp.myapp.controller;
 
+import bitcamp.myapp.annotation.LoginUser;
 import bitcamp.myapp.service.Board2Service;
 import bitcamp.myapp.service.StorageService;
 import bitcamp.myapp.vo.AttachedFile;
@@ -38,13 +39,12 @@ public class Board2Controller {
   @PostMapping("add")
   public String add(
       Board board,
-      MultipartFile[] files,
-      HttpSession session) throws Exception {
+      @LoginUser Member loginUser,
+      MultipartFile[] files
+      ) throws Exception {
 
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      throw new Exception("로그인하시기 바랍니다!");
-    }
+
+
     board.setWriter(loginUser);
 
     ArrayList<AttachedFile> attachedFiles = new ArrayList<>();
@@ -106,12 +106,10 @@ public class Board2Controller {
   public String update(
       Board board,
       MultipartFile[] files,
-      HttpSession session) throws Exception {
+      @LoginUser Member loginUser
+      ) throws Exception {
 
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      throw new Exception("로그인하시기 바랍니다!");
-    }
+
 
     Board old = boardService.get(board.getNo());
     if (old == null) {
@@ -148,12 +146,8 @@ public class Board2Controller {
   }
 
   @GetMapping("delete")
-  public String delete(int no, HttpSession session) throws Exception {
+  public String delete(int no, @LoginUser Member loginUser) throws Exception {
 
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      throw new Exception("로그인하시기 바랍니다!");
-    }
 
     Board board = boardService.get(no);
     if (board == null) {
@@ -175,12 +169,7 @@ public class Board2Controller {
   }
 
   @GetMapping("file/delete")
-  public String fileDelete(int no, HttpSession session) throws Exception {
-
-    Member loginUser = (Member) session.getAttribute("loginUser");
-    if (loginUser == null) {
-      throw new Exception("로그인하시기 바랍니다!");
-    }
+  public String fileDelete(int no, @LoginUser Member loginUser) throws Exception {
 
     AttachedFile file = boardService.getAttachedFile(no);
     if (file == null) {
